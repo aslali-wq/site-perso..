@@ -22,7 +22,31 @@ header {
 nav {
     background: #070d1a;
 }
+/* --- BOUTON TÉLÉCHARGEMENT CV --- */
+.cv-container {
+    margin-top: 2rem;
+    text-align: center; /* Centre le bouton */
+}
 
+.btn-cv {
+    display: inline-block;
+    background-color: #5553df; /* Ton violet */
+    color: #ffffff;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(85, 83, 223, 0.3); /* Ombre violette légère */
+}
+
+.btn-cv:hover {
+    background-color: #1e293b; /* Ton bleu nuit au survol */
+    color: #ffffff;
+    transform: translateY(-3px); /* Petit effet de soulèvement */
+    box-shadow: 0 6px 15px rgba(30, 41, 59, 0.4); /* Ombre plus foncée */
+}
 nav ul {
     display: flex;
     justify-content: center;
@@ -95,3 +119,4 @@ footer {
         align-items: center;
     }
 }
+
