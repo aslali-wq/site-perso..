@@ -82,25 +82,39 @@ Conçu et déployé des architectures réseau pour ESN eXia, Bibliothèque, Engi
     <p>© 2026 - ASLI Ali </p>
 </footer>
     <script>
-    // ====================================
-// NAVIGATION SMOOTH SCROLL
 // ====================================
+// 1. NAVIGATION SMOOTH SCROLL & EFFET OMBRE
+// ====================================
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+    // Ajoute une ombre sous le menu quand on descend
+    if (window.scrollY > 50) {
+        nav.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+        nav.style.backgroundColor = 'rgba(255, 255, 255, 0.95)'; // Légèrement transparent
+    } else {
+        nav.style.boxShadow = 'none';
+        nav.style.backgroundColor = 'transparent';
+    }
+});
+
 document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Ferme le menu mobile si on clique sur un lien
+            nav.classList.remove('active');
         }
     });
 });
 
 // ====================================
-// ANIMATION AU SCROLL (Fade-in)
+// 2. ANIMATION AU SCROLL (Fade-in)
 // ====================================
 const observerOptions = {
     threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
+    rootMargin: '0px 0px -50px 0px'
 };
 
 const observer = new IntersectionObserver(function(entries) {
@@ -108,146 +122,87 @@ const observer = new IntersectionObserver(function(entries) {
         if (entry.isIntersecting) {
             entry.target.style.opacity = '1';
             entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target); // On arrête d'observer une fois affiché
         }
     });
 }, observerOptions);
 
 document.querySelectorAll('section').forEach(section => {
     section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'all 0.6s ease-out';
+    section.style.transform = 'translateY(30px)';
+    section.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
     observer.observe(section);
 });
 
 // ====================================
-// COMPTEUR POUR LES COMPÉTENCES
+// 3. BADGES POUR LES COMPÉTENCES (Style moderne)
 // ====================================
-function animateCounter(element, target, duration = 1000) {
-    let current = 0;
-    const increment = target / (duration / 16);
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = target;
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.floor(current);
-        }
-    }, 16);
-}
-
-// Ajouter des indices de compétences (optionnel)
 const skillsList = document.querySelector('.skills-list');
 if (skillsList) {
-    let skillCount = 0;
+    skillsList.style.display = 'flex';
+    skillsList.style.flexWrap = 'wrap';
+    skillsList.style.gap = '10px';
+    skillsList.style.padding = '0';
+    
     skillsList.querySelectorAll('li').forEach((skill, index) => {
-        skill.innerHTML = `<span class="skill-number">${index + 1}</span> ${skill.textContent}`;
-        skill.style.animation = `slideIn 0.5s ease forwards`;
-        skill.style.animationDelay = `${index * 0.1}s`;
+        // Application du style badge directement via JS
+        skill.className = 'skill-badge';
+        skill.style.animation = `popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards`;
+        skill.style.animationDelay = `${index * 0.15}s`;
     });
 }
 
 // ====================================
-// MENU HAMBURGER (pour mobile)
+// 4. MENU HAMBURGER (pour mobile)
 // ====================================
 function createMobileMenu() {
     const nav = document.querySelector('nav');
-    
-    // Créer le bouton hamburger
     const menuBtn = document.createElement('button');
     menuBtn.className = 'menu-toggle';
     menuBtn.innerHTML = '☰';
     menuBtn.style.cssText = `
-        display: none;
-        background: #333;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        font-size: 24px;
-        cursor: pointer;
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        z-index: 1000;
+        display: none; background: #3498db; color: white;
+        border: none; padding: 10px 15px; font-size: 24px;
+        cursor: pointer; position: fixed; top: 15px; right: 15px;
+        z-index: 1000; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     `;
-    
     nav.parentElement.insertBefore(menuBtn, nav);
     
-    // Ajouter le CSS pour mobile
-    if (!document.querySelector('#mobile-styles')) {
-        const style = document.createElement('style');
-        style.id = 'mobile-styles';
-        style.textContent = `
-            @media (max-width: 768px) {
-                .menu-toggle { display: block !important; }
-                nav { 
-                    display: none;
-                    position: fixed;
-                    top: 50px;
-                    right: 0;
-                    background: #333;
-                    flex-direction: column;
-                    width: 100%;
-                }
-                nav.active { display: flex; }
-                nav ul { flex-direction: column; width: 100%; }
-                nav li { width: 100%; text-align: center; padding: 15px; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Toggle menu
     menuBtn.addEventListener('click', () => {
         nav.classList.toggle('active');
     });
 }
-
 createMobileMenu();
 
 // ====================================
-// ANIMATION AU SURVOL DES PROJETS
-// ====================================
-document.querySelectorAll('.project').forEach(project => {
-    project.style.transition = 'all 0.3s ease';
-    project.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px)';
-        this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
-    });
-    project.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-        this.style.boxShadow = 'none';
-    });
-});
-
-// ====================================
-// BOUTON "RETOUR EN HAUT"
+// 5. BOUTON "RETOUR EN HAUT"
 // ====================================
 const scrollBtn = document.createElement('button');
 scrollBtn.innerHTML = '↑';
 scrollBtn.id = 'scroll-top';
 scrollBtn.style.cssText = `
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: #333;
-    color: white;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    display: none;
-    z-index: 999;
-    transition: all 0.3s ease;
+    position: fixed; bottom: 30px; right: 30px;
+    background: #3498db; color: white; border: none;
+    width: 50px; height: 50px; border-radius: 50%;
+    font-size: 24px; font-weight: bold; cursor: pointer;
+    opacity: 0; pointer-events: none; z-index: 999;
+    transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 `;
+
+// Effet hover du bouton
+scrollBtn.onmouseover = () => { scrollBtn.style.background = '#2980b9'; scrollBtn.style.transform = 'translateY(-3px)'; };
+scrollBtn.onmouseout = () => { scrollBtn.style.background = '#3498db'; scrollBtn.style.transform = 'translateY(0)'; };
 
 document.body.appendChild(scrollBtn);
 
 window.addEventListener('scroll', () => {
-    scrollBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+    if (window.scrollY > 300) {
+        scrollBtn.style.opacity = '1';
+        scrollBtn.style.pointerEvents = 'auto';
+    } else {
+        scrollBtn.style.opacity = '0';
+        scrollBtn.style.pointerEvents = 'none';
+    }
 });
 
 scrollBtn.addEventListener('click', () => {
@@ -255,58 +210,92 @@ scrollBtn.addEventListener('click', () => {
 });
 
 // ====================================
-// EFFET DE TYPING SUR LE TITRE
+// 6. EFFET DE TYPING AVEC CURSEUR
 // ====================================
-function typeEffect(element, text, speed = 50) {
-    element.textContent = '';
+function typeEffect(element, text, speed = 60) {
+    element.innerHTML = '<span class="typed-text"></span><span class="cursor">|</span>';
+    const textSpan = element.querySelector('.typed-text');
     let i = 0;
+    
     const type = () => {
         if (i < text.length) {
-            element.textContent += text.charAt(i);
+            textSpan.textContent += text.charAt(i);
             i++;
             setTimeout(type, speed);
         }
     };
-    type();
+    setTimeout(type, 500); // Petit délai avant de commencer à écrire
 }
 
-const header = document.querySelector('header h1');
-if (header) {
-    const originalText = header.textContent;
-    typeEffect(header, originalText, 100);
+const headerH1 = document.querySelector('header h1');
+if (headerH1) {
+    const originalText = headerH1.textContent;
+    typeEffect(headerH1, originalText, 80);
 }
 
 // ====================================
-// AJOUTER DES ANIMATIONS CSS
+// 7. AJOUTER DES STYLES CSS VIA JS
 // ====================================
-if (!document.querySelector('#animations')) {
+if (!document.querySelector('#js-styles')) {
     const style = document.createElement('style');
-    style.id = 'animations';
+    style.id = 'js-styles';
     style.textContent = `
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        /* Curseur clignotant */
+        .cursor { display: inline-block; width: 3px; background-color: transparent; animation: blink 1s infinite; margin-left: 2px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Animation des compétences */
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
         
-        .project {
-            padding: 15px;
-            border-radius: 8px;
-            background: #f5f5f5;
+        /* Design des badges de compétences */
+        .skill-badge {
+            list-style: none;
+            background: #eef2f5;
+            color: #2c3e50;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid #dce4ec;
+            opacity: 0; /* Caché par défaut pour l'animation */
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        
-        .skill-number {
-            background: #333;
+        .skill-badge:hover {
+            background: #3498db;
             color: white;
-            padding: 2px 6px;
-            border-radius: 50%;
-            font-weight: bold;
-            margin-right: 5px;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Amélioration des cartes projets */
+        .project {
+            padding: 20px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #eee;
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .project:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: #3498db;
+            z-index: 2;
+        }
+
+        /* Styles Mobile Menu */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block !important; }
+            nav { position: fixed; top: 0; left: -100%; width: 250px; height: 100vh; background: #2c3e50; transition: 0.3s; padding-top: 60px; z-index: 998; }
+            nav.active { left: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            nav ul { flex-direction: column; }
+            nav li a { color: white; display: block; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         }
     `;
     document.head.appendChild(style);
@@ -314,6 +303,7 @@ if (!document.querySelector('#animations')) {
 </script>
 </body>
 </html>
+
 
 
 
